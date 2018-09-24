@@ -9,7 +9,8 @@ namespace HotelWcfSevice
     {
         public string hotelname { get; set; }
         public string roomtype { get; set; }
-        public string noOfRooms { get; set; }
+        public string  NoOfRoomsToBeBooked { get; set; }
+
 
         public string hotelid { get; set; }
     }

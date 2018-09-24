@@ -52,7 +52,7 @@ namespace HotelWcfSevice
         {
             ISession session = clusterObject.Connect("hotels");
             int availablerooms = 0;
-            int noRooms = int.Parse(bookObject.noOfRooms);
+            int noRooms = int.Parse(bookObject.NoOfRoomsToBeBooked);
             int id = int.Parse(bookObject.hotelid);
             string query = "SELECT * FROM  hotels.rooms where roomtype= '" + bookObject.roomtype + "' AND hotelid=" + id;
             var res = session.Execute(query);

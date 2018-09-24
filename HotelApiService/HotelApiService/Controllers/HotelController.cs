@@ -18,62 +18,86 @@ namespace HotelApiService.Controllers
         [Route("api/Hotel/GetCombinedDetails")]
          public async System.Threading.Tasks.Task<List<Hotel>> GetCombinedHotelDetailsFromWcfAndJson()
          {
-            Logger.Instance.InputLogDetails("Hotel Controller/GetHotelDetailsFromWCFandJson", "Success", "Getting combined details ");
-            List<Hotel> hotelslist = new List<Hotel>();
-            List<HotelFromJson> HotelListOfJson = new List<HotelFromJson>();
-            List<HotelFromWcf> HotelListOfWcf  = new List<HotelFromWcf>();
-            System.Threading.Tasks.Task<List<HotelFromWcf>> HotelListOfWcfTask = GetHotelDetailsFromWcf();
-            HotelListOfWcf = await HotelListOfWcfTask;
-            HotelListOfJson = GetHotelDetailsFromJson();
-            for(int index = 0; index < HotelListOfWcf.Count; index++ )
+            try
             {
-                Hotel hotel = new Hotel();
-                hotel.HotelName = HotelListOfWcf[index].HotelName;
-                hotel.HotelAddress = HotelListOfWcf[index].HotelAddress;
-                hotel.PinCode = HotelListOfWcf[index].PinCode;
-                hotel.HotelRating = HotelListOfWcf[index].HotelRating;
-                for(int j=0; j< HotelListOfJson.Count;j++)
+                Logger.Instance.InputLogDetails("Hotel Controller/GetHotelDetailsFromWCFandJson", "Success", "Getting combined details ");
+                List<Hotel> hotelslist = new List<Hotel>();
+                List<HotelFromJson> HotelListOfJson = new List<HotelFromJson>();
+                List<HotelFromWcf> HotelListOfWcf = new List<HotelFromWcf>();
+                System.Threading.Tasks.Task<List<HotelFromWcf>> HotelListOfWcfTask = GetHotelDetailsFromWcf();
+                HotelListOfWcf = await HotelListOfWcfTask;
+                HotelListOfJson = GetHotelDetailsFromJson();
+                for (int index = 0; index < HotelListOfWcf.Count; index++)
                 {
-                    if(HotelListOfJson[j].HotelId == HotelListOfWcf[index].HotelID)
+                    Hotel hotel = new Hotel();
+                    hotel.HotelName = HotelListOfWcf[index].HotelName;
+                    hotel.HotelAddress = HotelListOfWcf[index].HotelAddress;
+                    hotel.PinCode = HotelListOfWcf[index].PinCode;
+                    hotel.HotelRating = HotelListOfWcf[index].HotelRating;
+                    for (int j = 0; j < HotelListOfJson.Count; j++)
                     {
-                        hotel.HotelPolicy = HotelListOfJson[index].HotelPolicy;
-                        hotel.HotelContactNumber = HotelListOfJson[index].HotelContactNumber;
-                        hotel.HotelAmenities = HotelListOfJson[index].HotelAmenities;
-                        hotel.HotelDescription = HotelListOfJson[index].HotelDescription;
-                        hotel.HotelImageURL = HotelListOfJson[index].HotelImageURL;
-                        break;
+                        if (HotelListOfJson[j].HotelId == HotelListOfWcf[index].HotelID)
+                        {
+                            hotel.HotelPolicy = HotelListOfJson[index].HotelPolicy;
+                            hotel.HotelContactNumber = HotelListOfJson[index].HotelContactNumber;
+                            hotel.HotelAmenities = HotelListOfJson[index].HotelAmenities;
+                            hotel.HotelDescription = HotelListOfJson[index].HotelDescription;
+                            hotel.HotelImageURL = HotelListOfJson[index].HotelImageURL;
+                            break;
+                        }
                     }
+
+                    hotelslist.Add(hotel);
                 }
-                
-                 hotelslist.Add(hotel);
+                return hotelslist;
             }
-           return hotelslist;
+            catch(Exception e)
+            {
+                Logger.Instance.InputLogDetails("Hotel Controller/GetCombinedHotelDetailsFromWcfAndJson", "Failure", e.StackTrace);
+                return null;
+            }
          }
       
          public async System.Threading.Tasks.Task<List<HotelFromWcf>> GetHotelDetailsFromWcf()
         {
-            Logger.Instance.InputLogDetails("Hotel Controller/GetHotelDetailsFromWCF", "Success", "Getting hotelsfrom Wcf");
-            var client = new HttpClient();
-            var response = await client.GetAsync("http://localhost:53803/HotelService.svc/hotel");
-            List<HotelFromWcf> content = new List<HotelFromWcf>();
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-               content = await response.Content.ReadAsAsync<List<HotelFromWcf>>();
+                Logger.Instance.InputLogDetails("Hotel Controller/GetHotelDetailsFromWCF", "Success", "Getting hotelsfrom Wcf");
+                var client = new HttpClient();
+                var response = await client.GetAsync("http://localhost:53803/HotelService.svc/hotel");
+                List<HotelFromWcf> content = new List<HotelFromWcf>();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    content = await response.Content.ReadAsAsync<List<HotelFromWcf>>();
+                }
+                return content;
             }
-            return content;
+            catch(Exception e)
+            {
+                Logger.Instance.InputLogDetails("Hotel Controller/GetHotelDetailsFromWcf", "Failure", e.StackTrace);
+                return null;
+            }
            
         }
           public List<HotelFromJson> GetHotelDetailsFromJson()
         {
-            Logger.Instance.InputLogDetails("Hotel Controller/GetHotelDetailsFromJson", "Success", "Getting hotels from json");
-            string filepath = "C:/Users/nanand/source/repos/HotelApiService/staticcontent.JSON";
-            string result = string.Empty;
-            List<HotelFromJson> HotelList = new List<HotelFromJson>();
-            using (StreamReader streamreader = new StreamReader(filepath))
+            try
             {
-                var json = streamreader.ReadToEnd();
-                HotelList = JsonConvert.DeserializeObject<List<HotelFromJson>>(json);
-                return HotelList;
+                Logger.Instance.InputLogDetails("Hotel Controller/GetHotelDetailsFromJson", "Success", "Getting hotels from json");
+                string filepath = "C:/Users/nanand/source/repos/HotelApiService/staticcontent.JSON";
+                string result = string.Empty;
+                List<HotelFromJson> HotelList = new List<HotelFromJson>();
+                using (StreamReader streamreader = new StreamReader(filepath))
+                {
+                    var json = streamreader.ReadToEnd();
+                    HotelList = JsonConvert.DeserializeObject<List<HotelFromJson>>(json);
+                    return HotelList;
+                }
+            }
+            catch(Exception e)
+            {
+                Logger.Instance.InputLogDetails("Hotel Controller/GetHotelDetailsFromJSON", "Failure", e.StackTrace);
+                return null;
             }
 
         }
@@ -82,35 +106,43 @@ namespace HotelApiService.Controllers
         [Route("api/HotelService/rooms/{hotelname}")]
         public async System.Threading.Tasks.Task<List<Room>> getRoomsOfAHotel(string hotelname)
         {
-            Logger.Instance.InputLogDetails("Hotel Controller/getRoomsOfAHotel", "Success", "Getting rooms from hotel");
-            List<Room> roomsList = new List<Room>();
-            string filepath = "C:/Users/nanand/source/repos/HotelApiService/staticcontent.JSON";
-            string result = string.Empty;
-            List<HotelFromJson> HotelList = new List<HotelFromJson>();
-            using (StreamReader streamreader = new StreamReader(filepath))
+            try
             {
-                var json = streamreader.ReadToEnd();
-                HotelList = JsonConvert.DeserializeObject<List<HotelFromJson>>(json);
-                
-            }
-            string hotelid = null;
-            foreach (var hotel in HotelList)
-            {
-                if (hotel.HotelName == hotelname)
+                Logger.Instance.InputLogDetails("Hotel Controller/getRoomsOfAHotel", "Success", "Getting rooms from hotel");
+                List<Room> roomsList = new List<Room>();
+                string filepath = "C:/Users/nanand/source/repos/HotelApiService/staticcontent.JSON";
+                string result = string.Empty;
+                List<HotelFromJson> HotelList = new List<HotelFromJson>();
+                using (StreamReader streamreader = new StreamReader(filepath))
                 {
-                    hotelid = hotel.HotelId.ToString();
-                    break;
-                }
-            }
-            var client = new HttpClient();
-            string url = "http://localhost:53803/HotelService.svc/room/" + hotelid;
-            HttpResponseMessage response = await client.GetAsync(url);
-            if (response.IsSuccessStatusCode)
-            {
-                roomsList = await response.Content.ReadAsAsync<List<Room>>();
+                    var json = streamreader.ReadToEnd();
+                    HotelList = JsonConvert.DeserializeObject<List<HotelFromJson>>(json);
 
+                }
+                string hotelid = null;
+                foreach (var hotel in HotelList)
+                {
+                    if (hotel.HotelName == hotelname)
+                    {
+                        hotelid = hotel.HotelId.ToString();
+                        break;
+                    }
+                }
+                var client = new HttpClient();
+                string url = "http://localhost:53803/HotelService.svc/room/" + hotelid;
+                HttpResponseMessage response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    roomsList = await response.Content.ReadAsAsync<List<Room>>();
+
+                }
+                return roomsList;
             }
-            return roomsList;
+            catch(Exception e)
+            {
+                Logger.Instance.InputLogDetails("Hotel Controller/GetRoomsOfAHotel", "Failure", e.StackTrace);
+                return null;
+            }
 
         }
     }

@@ -11,7 +11,7 @@ namespace HotelApiService
         public SqlConnection createConnection()
         {
             SqlConnection connection = new SqlConnection();
-            connection.ConnectionString = "Data Source=TAVDESK045;Initial Catalog=Bookings;User ID=sa;Password=test123!@#";
+            connection.ConnectionString = "Data Source=TAVDESK045;Initial Catalog=HotelDb;User ID=sa;Password=test123!@#";
             return connection;
         }
     }

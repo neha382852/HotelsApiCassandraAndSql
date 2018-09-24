@@ -18,36 +18,45 @@ namespace HotelApiService
     {
         public void BookRoom([FromBody] Book bookingObject)
         {
-            Logger.Instance.InputLogDetails("Booking Controller/BookRoom", "Success", "Booking Details added in SQl");
-            Task.Run(() => {
-                string filepath = "C:/Users/nanand/source/repos/HotelApiService/staticcontent.JSON";
-                string result = string.Empty;
-                List<HotelFromJson> HotelList = new List<HotelFromJson>();
-                using (StreamReader streamreader = new StreamReader(filepath))
+            try
+            {
+                Logger.Instance.InputLogDetails("Booking Controller/BookRoom", "Success", "Booking Details added in SQl");
+                Task.Run(() =>
                 {
-                    var json = streamreader.ReadToEnd();
-                    HotelList = JsonConvert.DeserializeObject<List<HotelFromJson>>(json);
-
-                }
-
-                foreach (var hotel in HotelList)
-                {
-                    if (hotel.HotelName == bookingObject.HotelName)
+                    string filepath = "C:/Users/nanand/source/repos/HotelApiService/staticcontent.JSON";
+                    string result = string.Empty;
+                    List<HotelFromJson> HotelList = new List<HotelFromJson>();
+                    using (StreamReader streamreader = new StreamReader(filepath))
                     {
-                        bookingObject.HotelId = hotel.HotelId;
+                        var json = streamreader.ReadToEnd();
+                        HotelList = JsonConvert.DeserializeObject<List<HotelFromJson>>(json);
+
                     }
-                }
 
-                SqlRepository sqlObject = new SqlRepository();
-                sqlObject.AddBookingDetails(bookingObject);
-            });
+                    foreach (var hotel in HotelList)
+                    {
+                        if (hotel.HotelName == bookingObject.HotelName)
+                        {
+                            bookingObject.HotelId = hotel.HotelId;
+                        }
+                    }
+
+                    SqlRepository sqlObject = new SqlRepository();
+                    sqlObject.AddBookingDetails(bookingObject);
+
+
+                });
+            }
+            catch (Exception e)
+            {
+                Logger.Instance.InputLogDetails("Booking Controller/BookRoom", "Failure", e.StackTrace);
+            }
         }
-
         [HttpPut]
         public async void updateCassendra([FromBody] Bookings bookObj)
         {
 
-            Logger.Instance.InputLogDetails("HttpPut/Booking Controller/updateCassendra", "Success","Rooms table updated in cassandra");
+            Logger.Instance.InputLogDetails("HttpPut/Booking Controller/updateCassendra", "Success", "Rooms table updated in cassandra");
             string filepath = "C:/Users/nanand/source/repos/HotelApiService/staticcontent.JSON";
             string result = string.Empty;
             List<HotelFromJson> HotelList = new List<HotelFromJson>();
@@ -75,5 +84,6 @@ namespace HotelApiService
         }
 
 
+        
     }
 }

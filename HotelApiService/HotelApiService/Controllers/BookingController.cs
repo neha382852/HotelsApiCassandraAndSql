@@ -55,32 +55,37 @@ namespace HotelApiService
         [HttpPut]
         public async Task updateCassendra([FromBody] Bookings bookObj)
         {
-
-            Logger.Instance.InputLogDetails("HttpPut/Booking Controller/updateCassendra", "Success", "Rooms table updated in cassandra");
-            string filepath = "C:/Users/nanand/source/repos/HotelApiService/staticcontent.JSON";
-            string result = string.Empty;
-            List<HotelFromJson> HotelList = new List<HotelFromJson>();
-            using (StreamReader streamreader = new StreamReader(filepath))
-            {
-                var json = streamreader.ReadToEnd();
-                HotelList = JsonConvert.DeserializeObject<List<HotelFromJson>>(json);
-
-            }
-
-            foreach (var hotel in HotelList)
-            {
-                if (hotel.HotelName == bookObj.hotelname)
+            try {
+                Logger.Instance.InputLogDetails("HttpPut/Booking Controller/updateCassendra", "Success", "Rooms table updated in cassandra");
+                string filepath = "C:/Users/nanand/source/repos/HotelApiService/staticcontent.JSON";
+                string result = string.Empty;
+                List<HotelFromJson> HotelList = new List<HotelFromJson>();
+                using (StreamReader streamreader = new StreamReader(filepath))
                 {
-                    bookObj.hotelid = hotel.HotelId.ToString();
-                }
-            }
-            HttpResponseMessage response = null;
+                    var json = streamreader.ReadToEnd();
+                    HotelList = JsonConvert.DeserializeObject<List<HotelFromJson>>(json);
 
-            var client = new HttpClient();
-            
+                }
+
+                foreach (var hotel in HotelList)
+                {
+                    if (hotel.HotelName == bookObj.hotelname)
+                    {
+                        bookObj.hotelid = hotel.HotelId.ToString();
+                    }
+                }
+                HttpResponseMessage response = null;
+
+                var client = new HttpClient();
+
                 string url = "http://localhost:53803/HotelService.svc/hotel";
                 response = await client.PutAsJsonAsync(url, bookObj);
-            
+
+            }
+            catch(Exception e)
+            {
+                Logger.Instance.InputLogDetails("Booking Controller/updateCassendra", "Failure", e.StackTrace);
+            }
         }
 
 

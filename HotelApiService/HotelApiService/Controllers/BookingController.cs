@@ -53,7 +53,7 @@ namespace HotelApiService
             }
         }
         [HttpPut]
-        public async void updateCassendra([FromBody] Bookings bookObj)
+        public async Task updateCassendra([FromBody] Bookings bookObj)
         {
 
             Logger.Instance.InputLogDetails("HttpPut/Booking Controller/updateCassendra", "Success", "Rooms table updated in cassandra");
@@ -76,11 +76,11 @@ namespace HotelApiService
             }
             HttpResponseMessage response = null;
 
-            using (var client = new HttpClient())
-            {
+            var client = new HttpClient();
+            
                 string url = "http://localhost:53803/HotelService.svc/hotel";
                 response = await client.PutAsJsonAsync(url, bookObj);
-            }
+            
         }
 
 

@@ -1,0 +1,10 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\HotelApiService",
+    "\\HotelApiService\\Controllers",
+    "\\HotelApiService\\Models"
+  ],
+  "SelectedNode": "\\HotelApiService\\Controllers\\HotelController.cs",
+  "PreviewInSolutionExplorer": false
+}
